@@ -8,8 +8,8 @@
 import UIKit
 
 class RepositoryListViewController: UITableViewController {
-    private let organization = "Apple"
     
+    private let organization = "Apple"
     
     override func viewDidLoad() {
         super.viewDidLoad()
