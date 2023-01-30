@@ -6,20 +6,23 @@
 //
 
 import UIKit
+import RxSwift
+import RxCocoa
 
 class RepositoryListViewController: UITableViewController {
     
     private let organization = "Apple" // Github user
+    private let repositories = BehaviorSubject<[Repository]>(value: [])
+    private let disposeBag = DisposeBag()
     
     override func viewDidLoad() {
         super.viewDidLoad()
         
-        title = organization + "Repositories"
+        title = organization + " Repositories"
         
         // 당겨서 새로고침
         self.refreshControl = UIRefreshControl()
         let refreshControl = self.refreshControl!
-        refreshControl.backgroundColor = .white
         refreshControl.tintColor = .darkGray
         refreshControl.attributedTitle = NSAttributedString(string: "당겨서 새로고침")
         refreshControl.addTarget(self, action: #selector(refresh), for: .valueChanged)
@@ -30,67 +33,85 @@ class RepositoryListViewController: UITableViewController {
     
     @objc func refresh(){
         // API network 통신
+        DispatchQueue.global(qos: .background).async {[weak self] in
+            guard let self = self else { return }
+            self.fetchRepositories(of: self.organization)
+        }
     }
     
-    
-    
+    func fetchRepositories(of organization: String) {
+        Observable.from([organization]) // from : 오직 array 형태의 element만 받음
+            .map { organization -> URL in // URL 변환
+                return URL(string: "https://api.github.com/orgs/\(organization)/repos")!
+            }
+            .map { url -> URLRequest in // URLRequest 변환
+                var request = URLRequest(url: url)
+                request.httpMethod = "GET"
+                return request
+            }
+            .flatMap { request -> Observable<(response: HTTPURLResponse, data: Data)> in
+                return URLSession.shared.rx.response(request: request)
+            }
+            .filter { response, _ in
+                return 200..<300 ~= response.statusCode
+            }
+            .map { _, data -> [[String: Any]] in
+                guard let json = try? JSONSerialization.jsonObject(with: data, options: []),
+                      let result = json as? [[String: Any]] else {
+                    return []
+                }
+                return result
+            }
+            .filter { objects in
+                return objects.count > 0
+            }
+            .map { objects in
+                return objects.compactMap { dic -> Repository? in
+                    guard let id = dic["id"] as? Int,
+                          let name = dic["name"] as? String,
+                          let description = dic["description"] as? String,
+                          let stargazersCount = dic["stargazers_count"] as? Int,
+                          let language = dic["language"] as? String else {
+                        return nil
+                    }
+                    
+                    return Repository(id: id, name: name, description: description, stargazersCount: stargazersCount, language: language)
+                }
+            }
+            .subscribe(onNext: {[weak self] newRepositories in
+                self?.repositories.onNext(newRepositories)
+                
+                DispatchQueue.main.async {
+                    self?.tableView.reloadData()
+                    self?.refreshControl?.endRefreshing()
+                }
+            })
+            .disposed(by: disposeBag)
+    }
     
 
     // MARK: - Table view data source
     override func tableView(_ tableView: UITableView, numberOfRowsInSection section: Int) -> Int {
-        // #warning Incomplete implementation, return the number of rows
-        return 0
+        do {
+            return try repositories.value().count
+        } catch {
+            return 0
+        }
     }
 
     override func tableView(_ tableView: UITableView, cellForRowAt indexPath: IndexPath) -> UITableViewCell {
-        guard let cell = tableView.dequeueReusableCell(withIdentifier: "reuseIdentifier", for: indexPath) as? RepositoryListCell else { return UITableViewCell() }
+        guard let cell = tableView.dequeueReusableCell(withIdentifier: "RepositoryListCell", for: indexPath) as? RepositoryListCell else { return UITableViewCell() }
 
+        var currentRepo: Repository? {
+            do {
+                return try repositories.value()[indexPath.row]
+            } catch {
+                return nil
+            }
+        }
+        
+        cell.repository = currentRepo
+        
         return cell
     }
-
-    /*
-    // Override to support conditional editing of the table view.
-    override func tableView(_ tableView: UITableView, canEditRowAt indexPath: IndexPath) -> Bool {
-        // Return false if you do not want the specified item to be editable.
-        return true
-    }
-    */
-
-    /*
-    // Override to support editing the table view.
-    override func tableView(_ tableView: UITableView, commit editingStyle: UITableViewCell.EditingStyle, forRowAt indexPath: IndexPath) {
-        if editingStyle == .delete {
-            // Delete the row from the data source
-            tableView.deleteRows(at: [indexPath], with: .fade)
-        } else if editingStyle == .insert {
-            // Create a new instance of the appropriate class, insert it into the array, and add a new row to the table view
-        }    
-    }
-    */
-
-    /*
-    // Override to support rearranging the table view.
-    override func tableView(_ tableView: UITableView, moveRowAt fromIndexPath: IndexPath, to: IndexPath) {
-
-    }
-    */
-
-    /*
-    // Override to support conditional rearranging of the table view.
-    override func tableView(_ tableView: UITableView, canMoveRowAt indexPath: IndexPath) -> Bool {
-        // Return false if you do not want the item to be re-orderable.
-        return true
-    }
-    */
-
-    /*
-    // MARK: - Navigation
-
-    // In a storyboard-based application, you will often want to do a little preparation before navigation
-    override func prepare(for segue: UIStoryboardSegue, sender: Any?) {
-        // Get the new view controller using segue.destination.
-        // Pass the selected object to the new view controller.
-    }
-    */
-
 }

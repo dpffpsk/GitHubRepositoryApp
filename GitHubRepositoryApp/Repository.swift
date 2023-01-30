@@ -2,7 +2,7 @@
 //  Repository.swift
 //  GitHubRepositoryApp
 //
-//  Created by jiweon.lee on 2023/01/30.
+//  Created by wons on 2023/01/30.
 //
 
 import Foundation

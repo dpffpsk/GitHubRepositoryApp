@@ -9,17 +9,6 @@ import UIKit
 import SnapKit
 
 class RepositoryListCell: UITableViewCell {
-
-    override func awakeFromNib() {
-        super.awakeFromNib()
-        // Initialization code
-    }
-
-    override func setSelected(_ selected: Bool, animated: Bool) {
-        super.setSelected(selected, animated: animated)
-
-        // Configure the view for the selected state
-    }
     
     var repository: Repository?
     
@@ -52,22 +41,21 @@ class RepositoryListCell: UITableViewCell {
         descriptionLabel.numberOfLines = 2
         
         starImageView.image = UIImage(systemName: "star")
-
+        
         starLabel.text = "\(repository.stargazersCount)"
         starLabel.font = .systemFont(ofSize: 16)
         starLabel.textColor = .gray
-
+        
         languageLabel.text = repository.language
         languageLabel.font = .systemFont(ofSize: 16)
         languageLabel.textColor = .gray
         
-        // Auto Layout
         nameLabel.snp.makeConstraints {
-            $0.top.leading.trailing.bottom.equalToSuperview().inset(18)
+            $0.top.leading.trailing.equalToSuperview().inset(18)
         }
         
         descriptionLabel.snp.makeConstraints {
-            $0.top.equalTo(nameLabel.snp.bottom).offset(13)
+            $0.top.equalTo(nameLabel.snp.bottom).offset(3)
             $0.leading.trailing.equalTo(nameLabel)
         }
         
