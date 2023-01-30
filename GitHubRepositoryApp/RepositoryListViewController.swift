@@ -9,47 +9,44 @@ import UIKit
 
 class RepositoryListViewController: UITableViewController {
     
-    private let organization = "Apple"
+    private let organization = "Apple" // Github user
     
     override func viewDidLoad() {
         super.viewDidLoad()
-
+        
         title = organization + "Repositories"
         
-        // 새로고침
+        // 당겨서 새로고침
         self.refreshControl = UIRefreshControl()
         let refreshControl = self.refreshControl!
         refreshControl.backgroundColor = .white
         refreshControl.tintColor = .darkGray
         refreshControl.attributedTitle = NSAttributedString(string: "당겨서 새로고침")
+        refreshControl.addTarget(self, action: #selector(refresh), for: .valueChanged)
+        
+        tableView.register(RepositoryListCell.self, forCellReuseIdentifier: "RepositoryListCell")
+        tableView.rowHeight = 140
     }
     
+    @objc func refresh(){
+        // API network 통신
+    }
     
     
     
     
 
     // MARK: - Table view data source
-
-    override func numberOfSections(in tableView: UITableView) -> Int {
-        // #warning Incomplete implementation, return the number of sections
-        return 0
-    }
-
     override func tableView(_ tableView: UITableView, numberOfRowsInSection section: Int) -> Int {
         // #warning Incomplete implementation, return the number of rows
         return 0
     }
 
-    /*
     override func tableView(_ tableView: UITableView, cellForRowAt indexPath: IndexPath) -> UITableViewCell {
-        let cell = tableView.dequeueReusableCell(withIdentifier: "reuseIdentifier", for: indexPath)
-
-        // Configure the cell...
+        guard let cell = tableView.dequeueReusableCell(withIdentifier: "reuseIdentifier", for: indexPath) as? RepositoryListCell else { return UITableViewCell() }
 
         return cell
     }
-    */
 
     /*
     // Override to support conditional editing of the table view.

@@ -14,6 +14,7 @@
 		B3B2658429752E2200BD9454 /* SceneDelegate.swift in Sources */ = {isa = PBXBuildFile; fileRef = B3B2658329752E2200BD9454 /* SceneDelegate.swift */; };
 		B3B2658B29752E2400BD9454 /* Assets.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = B3B2658A29752E2400BD9454 /* Assets.xcassets */; };
 		B3B2658E29752E2400BD9454 /* LaunchScreen.storyboard in Resources */ = {isa = PBXBuildFile; fileRef = B3B2658C29752E2400BD9454 /* LaunchScreen.storyboard */; };
+		B3EF865D298791C200869F64 /* Repository.swift in Sources */ = {isa = PBXBuildFile; fileRef = B3EF865C298791C200869F64 /* Repository.swift */; };
 		D133C43EDCD21BF221AC0259 /* Pods_GitHubRepositoryApp.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = E362DCC8F7CA077DDB7EB77D /* Pods_GitHubRepositoryApp.framework */; };
 /* End PBXBuildFile section */
 
@@ -28,6 +29,7 @@
 		B3B2658A29752E2400BD9454 /* Assets.xcassets */ = {isa = PBXFileReference; lastKnownFileType = folder.assetcatalog; path = Assets.xcassets; sourceTree = "<group>"; };
 		B3B2658D29752E2400BD9454 /* Base */ = {isa = PBXFileReference; lastKnownFileType = file.storyboard; name = Base; path = Base.lproj/LaunchScreen.storyboard; sourceTree = "<group>"; };
 		B3B2658F29752E2400BD9454 /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = Info.plist; sourceTree = "<group>"; };
+		B3EF865C298791C200869F64 /* Repository.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Repository.swift; sourceTree = "<group>"; };
 		E362DCC8F7CA077DDB7EB77D /* Pods_GitHubRepositoryApp.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; includeInIndex = 0; path = Pods_GitHubRepositoryApp.framework; sourceTree = BUILT_PRODUCTS_DIR; };
 /* End PBXFileReference section */
 
@@ -84,11 +86,12 @@
 			children = (
 				B3B2658129752E2200BD9454 /* AppDelegate.swift */,
 				B3B2658329752E2200BD9454 /* SceneDelegate.swift */,
+				B325ECB52977C619003E9A2E /* RepositoryListViewController.swift */,
+				B325ECB72977DD04003E9A2E /* RepositoryListCell.swift */,
+				B3EF865C298791C200869F64 /* Repository.swift */,
 				B3B2658A29752E2400BD9454 /* Assets.xcassets */,
 				B3B2658C29752E2400BD9454 /* LaunchScreen.storyboard */,
 				B3B2658F29752E2400BD9454 /* Info.plist */,
-				B325ECB52977C619003E9A2E /* RepositoryListViewController.swift */,
-				B325ECB72977DD04003E9A2E /* RepositoryListCell.swift */,
 			);
 			path = GitHubRepositoryApp;
 			sourceTree = "<group>";
@@ -215,6 +218,7 @@
 			files = (
 				B3B2658229752E2200BD9454 /* AppDelegate.swift in Sources */,
 				B3B2658429752E2200BD9454 /* SceneDelegate.swift in Sources */,
+				B3EF865D298791C200869F64 /* Repository.swift in Sources */,
 				B325ECB62977C619003E9A2E /* RepositoryListViewController.swift in Sources */,
 				B325ECB82977DD04003E9A2E /* RepositoryListCell.swift in Sources */,
 			);
