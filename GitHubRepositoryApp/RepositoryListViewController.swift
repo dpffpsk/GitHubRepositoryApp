@@ -41,19 +41,24 @@ class RepositoryListViewController: UITableViewController {
     
     func fetchRepositories(of organization: String) {
         Observable.from([organization]) // from : 오직 array 형태의 element만 받음
-            .map { organization -> URL in // URL 변환
+            .map { organization -> URL in
                 return URL(string: "https://api.github.com/orgs/\(organization)/repos")!
+                // https://api.github.com/orgs/Apple/repos
             }
-            .map { url -> URLRequest in // URLRequest 변환
+            .map { url -> URLRequest in
                 var request = URLRequest(url: url)
                 request.httpMethod = "GET"
                 return request
+                // https://api.github.com/orgs/Apple/repos
             }
             .flatMap { request -> Observable<(response: HTTPURLResponse, data: Data)> in
                 return URLSession.shared.rx.response(request: request)
+                // flatMap은 블록 내에서 Observable을 리턴해야하므로, API를 사용할때 응답값이 Observable일때 flatMap사용
+                // RxSwift.(unknown context at $1013cae18).AnonymousObservable<(response: __C.NSHTTPURLResponse, data: Foundation.Data)>
             }
-            .filter { response, _ in
+            .filter { response, _ in // filter : Bool 데이터 타입의 파라미터(Bool값을 리턴하는 클로저)에 따라 true일 이벤트 방출
                 return 200..<300 ~= response.statusCode
+                // true
             }
             .map { _, data -> [[String: Any]] in
                 guard let json = try? JSONSerialization.jsonObject(with: data, options: []),
@@ -61,11 +66,14 @@ class RepositoryListViewController: UITableViewController {
                     return []
                 }
                 return result
+                // [["url": https://api....
             }
             .filter { objects in
                 return objects.count > 0
+                // true
             }
             .map { objects in
+                // compactMap : map 기능 + 옵셔널 바인딩
                 return objects.compactMap { dic -> Repository? in
                     guard let id = dic["id"] as? Int,
                           let name = dic["name"] as? String,
@@ -74,7 +82,6 @@ class RepositoryListViewController: UITableViewController {
                           let language = dic["language"] as? String else {
                         return nil
                     }
-                    
                     return Repository(id: id, name: name, description: description, stargazersCount: stargazersCount, language: language)
                 }
             }
